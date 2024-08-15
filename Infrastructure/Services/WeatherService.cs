@@ -22,17 +22,12 @@ public class WeatherService
         return weatherResponse;
     }
     
-    public async Task<(double lat, double lon)> GetCoordinatesAsync(string cityName)
+    public async Task<List<GeocodingResponse>> GetPlaceSuggestionsAsync(string cityName)
     {
-        var url = $"http://api.openweathermap.org/geo/1.0/direct?q={cityName}&limit=1&appid={_apiKey}";
+        var url = $"http://api.openweathermap.org/geo/1.0/direct?q={cityName}&limit=5&appid={_apiKey}";
         var responseString = await _httpClient.GetStringAsync(url);
         var locationData = JsonSerializer.Deserialize<List<GeocodingResponse>>(responseString);
-        if (locationData == null || !locationData.Any())
-        {
-            throw new Exception("Location not found");
-        }
-        var location = locationData.First();
-        return (location.lat, location.lon);
+        return locationData ?? new List<GeocodingResponse>();
     }
     
     //Air polution
@@ -43,5 +38,15 @@ public class WeatherService
         Console.WriteLine(responseString);
         var airPollutionResponse = JsonSerializer.Deserialize<AirPollutionResponse>(responseString);
         return airPollutionResponse;
+    }
+    //5 days weather
+    public async Task<NextDaysWeatherResponse> GetWeatherForNextDaysAsync(double lat, double lon)
+    {
+        var url = $"http://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&units=metric&appid={_apiKey}";
+        var responseString = await _httpClient.GetStringAsync(url);
+        Console.WriteLine(responseString);
+        var weatherResponse = JsonSerializer.Deserialize<NextDaysWeatherResponse>(responseString);
+        return weatherResponse;
+        
     }
 }

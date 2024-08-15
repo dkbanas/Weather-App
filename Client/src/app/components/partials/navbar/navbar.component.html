@@ -5,8 +5,22 @@
   </a>
   <form class="form-inline mx-auto" style="flex-grow: 1; max-width: 600px; position: relative;">
     <div class="input-group" style="width: 100%;">
-      <input class="form-control" type="search" placeholder="Search" aria-label="Search" style="border-radius: 20px 0 0 20px;">
-      <button class="btn btn-outline-success" type="submit" style="border-radius: 0 20px 20px 0;">Search</button>
+      <input
+        [(ngModel)]="searchQuery"
+        (input)="onSearch()"
+        name="searchInput"
+      class="form-control"
+      type="search"
+      placeholder="Search"
+      aria-label="Search"
+      style="border-radius: 20px 0 0 20px;"
+      >
+      <button class="btn btn-outline-success" (click)="onSearch()" type="button" style="border-radius: 0 20px 20px 0;">Search</button>
+    </div>
+    <div *ngIf="suggestions.length > 0" class="suggestions" style="position: absolute; top: 100%; left: 0; right: 0; background: white; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); z-index: 1000;">
+      <div *ngFor="let suggestion of suggestions" (click)="selectSuggestion(suggestion)" class="suggestion-item">
+        {{ suggestion.name }} ({{ suggestion.state ? suggestion.state + ', ' : '' }}{{ suggestion.country }})
+      </div>
     </div>
   </form>
 </nav>

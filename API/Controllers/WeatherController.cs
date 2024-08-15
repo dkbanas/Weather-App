@@ -29,9 +29,44 @@ public class WeatherController : ControllerBase
     {
         try
         {
-            var (lat, lon) = await _weatherService.GetCoordinatesAsync(cityName);
-            var weather = await _weatherService.GetCurrentWeatherAsync(lat, lon);
+            var locationData = await _weatherService.GetPlaceSuggestionsAsync(cityName);
+            if (!locationData.Any())
+            {
+                return NotFound(new { error = "No places found" });
+            }
+            
+            var firstLocation = locationData.First();
+            var weather = await _weatherService.GetCurrentWeatherAsync(firstLocation.lat, firstLocation.lon);
             return Ok(weather);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+
+    // Endpoint to get place suggestions
+    [HttpGet("places")]
+    public async Task<IActionResult> GetPlaceSuggestions(string query)
+    {
+        try
+        {
+            var locationData = await _weatherService.GetPlaceSuggestionsAsync(query);
+            if (!locationData.Any())
+            {
+                return NotFound(new { error = "No places found" });
+            }
+
+            var suggestions = locationData.Select(location => new
+            {
+                name = location.name,
+                lat = location.lat,
+                lon = location.lon,
+                country = location.country,
+                state = location.state
+            }).ToList();
+
+            return Ok(suggestions);
         }
         catch (Exception ex)
         {
@@ -45,5 +80,14 @@ public class WeatherController : ControllerBase
         var airPollution = await _weatherService.GetCurrentAirPollutionAsync(lat, lon);
         Console.WriteLine(JsonSerializer.Serialize(airPollution));
         return Ok(airPollution);
+    }
+    
+    //NextDaysWeather
+    [HttpGet("prediction")]
+    public async Task<IActionResult> WeatherForNextDays(double lat, double lon)
+    {
+        var weather = await _weatherService.GetWeatherForNextDaysAsync(lat, lon);
+        Console.WriteLine(JsonSerializer.Serialize(weather));
+        return Ok(weather);
     }
 }
