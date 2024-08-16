@@ -33,15 +33,35 @@ export class NavbarComponent {
     );
   }
 
+  onSearchButtonClick(): void {
+    if (this.suggestions.length > 0) {
+      this.selectSuggestion(this.suggestions[0]);
+    }
+  }
+
   selectSuggestion(suggestion: any): void {
     const { lat, lon, name } = suggestion;
     this.weatherService.getCurrentWeather(lat, lon).subscribe({
       next: (response) => {
-        this.weatherService.updateWeather({ currentWeather: response });
+        // Update weather including forecast
+        this.weatherService.updateWeather({ currentWeather: response, dailyHighestTemp: [], hourlyWeatherToday: [] });
+
+        // Fetch weather forecast for the selected location
+        this.weatherService.getWeatherForNextDays(lat, lon).subscribe({
+          next: (forecastResponse) => {
+            this.weatherService.updateWeather({
+              currentWeather: response,
+              dailyHighestTemp: forecastResponse.dailyHighestTemp,
+              hourlyWeatherToday: forecastResponse.hourlyWeatherToday
+            });
+          },
+          error: (error) => console.error('Error fetching weather forecast:', error)
+        });
       },
       error: (error) => console.error('Error fetching weather data:', error)
     });
     this.searchQuery = name;
     this.suggestions = [];
   }
+
 }

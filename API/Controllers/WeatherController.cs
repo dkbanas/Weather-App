@@ -82,12 +82,29 @@ public class WeatherController : ControllerBase
         return Ok(airPollution);
     }
     
-    //NextDaysWeather
+
+    // [HttpGet("prediction")]
+    // public async Task<IActionResult> WeatherForNextDays(double lat, double lon)
+    // {
+    //     var weather = await _weatherService.GetWeatherForNextDaysAsync(lat, lon);
+    //     Console.WriteLine(JsonSerializer.Serialize(weather));
+    //     return Ok(weather);
+    // }
+    
     [HttpGet("prediction")]
     public async Task<IActionResult> WeatherForNextDays(double lat, double lon)
     {
-        var weather = await _weatherService.GetWeatherForNextDaysAsync(lat, lon);
-        Console.WriteLine(JsonSerializer.Serialize(weather));
-        return Ok(weather);
+        // Get hourly weather for today and highest temperature for the next 5 days
+        var (hourlyWeatherToday, dailyHighestTemp) = await _weatherService.GetWeatherForCurrentAndNextDaysAsync(lat, lon);
+
+        // Create a response object to encapsulate the data
+        var result = new
+        {
+            HourlyWeatherToday = hourlyWeatherToday,
+            DailyHighestTemp = dailyHighestTemp
+        };
+
+        // Return the response as JSON
+        return Ok(result);
     }
 }

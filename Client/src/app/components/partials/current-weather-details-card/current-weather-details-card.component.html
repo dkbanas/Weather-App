@@ -1,0 +1,46 @@
+<div class="col" *ngIf="currentWeather">
+  <div class="card text-dark bg-light mb-3">
+    <div class="card-body">
+      <h5 class="card-title">Current Weather Details</h5>
+
+      <div class="mb-4">
+        <h6>Air Pollution</h6>
+        <p class="mb-1">Qualitative Name: <span id="air-quality">{{ airQualityLabel }}</span></p>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">SO2: <span id="so2">{{ airPollution?.list?.[0]?.components?.so2 }} μg/m³</span></li>
+          <li class="list-group-item">NO2: <span id="no2">{{ airPollution?.list?.[0]?.components?.no2 }} μg/m³</span></li>
+          <li class="list-group-item">PM10: <span id="pm10">{{ airPollution?.list?.[0]?.components?.pm10 }} μg/m³</span></li>
+          <li class="list-group-item">PM2.5: <span id="pm25">{{ airPollution?.list?.[0]?.components?.pm2_5 }} μg/m³</span></li>
+          <li class="list-group-item">O3: <span id="o3">{{ airPollution?.list?.[0]?.components?.o3 }} μg/m³</span></li>
+          <li class="list-group-item">CO: <span id="co">{{ airPollution?.list?.[0]?.components?.co }} μg/m³</span></li>
+        </ul>
+      </div>
+
+      <div class="mb-4">
+        <h6>Weather Information</h6>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">Feels Like: <span id="feels_like">{{ currentWeather?.main?.feels_like }} °C</span></li>
+          <li class="list-group-item">Min Temperature: <span id="temp_min">{{ currentWeather?.main?.temp_min }} °C</span></li>
+          <li class="list-group-item">Max Temperature: <span id="temp_max">{{ currentWeather?.main?.temp_max }} °C</span></li>
+          <li class="list-group-item">Pressure: <span id="pressure">{{ currentWeather?.main?.pressure }} hPa</span></li>
+          <li class="list-group-item">Humidity: <span id="humidity">{{ currentWeather?.main?.humidity }}%</span></li>
+          <li class="list-group-item">Sea Level Pressure: <span id="sea_level">{{ currentWeather?.main?.sea_level }} hPa</span></li>
+          <li class="list-group-item">Ground Level Pressure: <span id="grnd_level">{{ currentWeather?.main?.grnd_level }} hPa</span></li>
+          <li class="list-group-item">Visibility: <span id="visibility">{{ currentWeather?.visibility }} m</span></li>
+          <li class="list-group-item">Wind Speed: <span id="wind_speed">{{ currentWeather?.wind?.speed }} m/s</span></li>
+          <li class="list-group-item">Wind Direction: <span id="wind_deg">{{ currentWeather?.wind?.deg }}°</span></li>
+          <li class="list-group-item">Wind Gust: <span id="wind_gust">{{ currentWeather?.wind?.gust }} m/s</span></li>
+        </ul>
+      </div>
+
+
+      <div>
+        <h6>Sunrise & Sunset</h6>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">Sunrise: <span id="sunrise">{{ sunrise | date:'HH:mm' }}</span></li>
+          <li class="list-group-item">Sunset: <span id="sunset">{{ sunset | date:'HH:mm' }}</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
