@@ -1,13 +1,13 @@
-<div class="card text-white bg-dark mb-3" *ngIf="hourlyWeatherToday.length>0">
+<div class="card text-white bg-dark mb-3" *ngIf="hourlyWeatherToday.length > 0">
   <div class="card-body">
-    <h5 class="card-title">Hourly Forecast</h5>
+    <h5 class="card-title"> <i class="bi bi-clock"></i> Hourly Forecast</h5>
     <div class="d-flex flex-column">
       <div *ngFor="let hour of hourlyWeatherToday" class="d-flex flex-row align-items-center mb-3 weather-item">
         <div class="weather-time">
           <h6>{{(hour.dt * 1000) | date: 'shortTime' }}</h6>
         </div>
         <div class="weather-icon">
-          <img [src]="'http://openweathermap.org/img/wn/' + hour.weather[0].icon + '@2x.png'" alt="Weather Icon">
+          <img [src]="hour.weather[0].icon + '.png'" alt="Weather Icon">
         </div>
         <div class="weather-description">
           <p class="mb-0">{{ hour.weather[0].description }}</p>

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import {WeatherService} from "../../../services/weather.service";
 import {CommonModule} from "@angular/common";
 import {FormsModule} from "@angular/forms";
+import {catchError, debounceTime, of, Subject, Subscription, switchMap} from "rxjs";
 
 @Component({
   selector: 'app-navbar',
@@ -13,24 +14,33 @@ import {FormsModule} from "@angular/forms";
 export class NavbarComponent {
   searchQuery: string = '';
   suggestions: any[] = [];
+  private searchSubject = new Subject<string>();
+  private subscriptions: Subscription = new Subscription();
 
-  constructor(private weatherService: WeatherService) { }
+  constructor(private weatherService: WeatherService) {
+    this.subscriptions.add(
+      this.searchSubject.pipe(
+        debounceTime(300),
+        switchMap(query => {
+          if (query.length < 3) {
+            this.suggestions = [];
+            return of([]);
+          }
+          return this.weatherService.getPlaceSuggestions(query);
+        }),
+        catchError(error => {
+          console.error('Error fetching place suggestions:', error);
+          this.suggestions = [];
+          return of([]);
+        })
+      ).subscribe(data => {
+        this.suggestions = data;
+      })
+    );
+  }
 
   onSearch(): void {
-    if (this.searchQuery.length < 3) {
-      this.suggestions = [];
-      return;
-    }
-
-    this.weatherService.getPlaceSuggestions(this.searchQuery).subscribe(
-      data => {
-        this.suggestions = data;
-      },
-      error => {
-        console.error('Error fetching place suggestions:', error);
-        this.suggestions = [];
-      }
-    );
+    this.searchSubject.next(this.searchQuery);
   }
 
   onSearchButtonClick(): void {
@@ -40,11 +50,11 @@ export class NavbarComponent {
   }
 
   selectSuggestion(suggestion: any): void {
-    const { lat, lon, name } = suggestion;
+    const {lat, lon, name} = suggestion;
     this.weatherService.getCurrentWeather(lat, lon).subscribe({
       next: (response) => {
         // Update weather including forecast
-        this.weatherService.updateWeather({ currentWeather: response, dailyHighestTemp: [], hourlyWeatherToday: [] });
+        this.weatherService.updateWeather({currentWeather: response, dailyHighestTemp: [], hourlyWeatherToday: []});
 
         // Fetch weather forecast for the selected location
         this.weatherService.getWeatherForNextDays(lat, lon).subscribe({
@@ -62,6 +72,10 @@ export class NavbarComponent {
     });
     this.searchQuery = name;
     this.suggestions = [];
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
 }

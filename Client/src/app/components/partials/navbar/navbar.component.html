@@ -8,6 +8,7 @@
       <input
         [(ngModel)]="searchQuery"
         (input)="onSearch()"
+        (keyup.enter)="onSearchButtonClick()"
         name="searchInput"
         class="form-control"
         type="search"

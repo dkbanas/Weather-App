@@ -1,8 +1,39 @@
 <div class="container mt-4">
   <div class="row">
-      <app-current-weather-card [currentWeather]="currentWeather"></app-current-weather-card>
+    <!-- Left column -->
+    <div class="col-md-4 order-md-3">
       <app-five-days-forecast [dailyHighestTemp]="dailyHighestTemp"></app-five-days-forecast>
+    </div>
+
+    <!-- Middle column -->
+    <div class="col-md-4 order-md-1">
+      <app-current-weather-card [currentWeather]="currentWeather"></app-current-weather-card>
       <app-hourly-weather-card [hourlyWeatherToday]="hourlyWeatherToday"></app-hourly-weather-card>
+    </div>
+
+    <!-- Right column -->
+    <div class="col-md-4 order-md-2">
       <app-current-weather-details-card [currentWeather]="currentWeather" [airPollution]="airPollution"></app-current-weather-details-card>
+    </div>
   </div>
 </div>
+
+<ng-template #noLocation>
+  <div class="row">
+    <div class="col-12 text-center">
+      <div class="alert alert-info" role="alert">
+        <h4 class="alert-heading">Welcome to the Weather App!</h4>
+        <p>
+          This app provides current weather information, hourly forecasts, and a five-day outlook.
+          To get started, search for a location using the search bar above. Once you select a location,
+          you'll see the current weather conditions, hourly forecast, and a detailed view including air pollution data.
+        </p>
+        <hr>
+        <p class="mb-0">
+          Simply type in the name of a city or location to see the available suggestions. Click on a suggestion
+          to view the weather details for that location.
+        </p>
+      </div>
+    </div>
+  </div>
+</ng-template>

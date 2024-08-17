@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import {ICurrentWeather} from "../../../models/ICurrentWeather";
 import {WeatherService} from "../../../services/weather.service";
-import {DatePipe, NgForOf} from "@angular/common";
+import {DatePipe, NgForOf, NgIf} from "@angular/common";
 import {ICurrentAirPollution} from "../../../models/ICurrentAirPollution";
 import {CurrentWeatherCardComponent} from "../../partials/current-weather-card/current-weather-card.component";
 import {
@@ -19,7 +19,8 @@ import {HourlyWeatherCardComponent} from "../../partials/hourly-weather-card/hou
     CurrentWeatherCardComponent,
     CurrentWeatherDetailsCardComponent,
     FiveDaysForecastComponent,
-    HourlyWeatherCardComponent
+    HourlyWeatherCardComponent,
+    NgIf
   ],
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.scss'
@@ -29,9 +30,6 @@ export class HomePageComponent {
   airPollution: ICurrentAirPollution | null = null;
   hourlyWeatherToday: any[] = [];
   dailyHighestTemp: any[] = [];
-  private selectedLat?: number;
-  private selectedLon?: number;
-
   constructor(private weatherService: WeatherService) {}
 
   ngOnInit() {
