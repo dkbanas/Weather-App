@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Core.Entities;
+using Core.Interfaces;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,9 +10,9 @@ namespace API.Controllers;
 [Route("[controller]")]
 public class WeatherController : ControllerBase
 {
-    private readonly WeatherService _weatherService;
+    private readonly IWeatherService _weatherService;
 
-    public WeatherController(WeatherService weatherService)
+    public WeatherController(IWeatherService weatherService)
     {
         _weatherService = weatherService;
     }
@@ -19,9 +20,15 @@ public class WeatherController : ControllerBase
     [HttpGet("current")]
     public async Task<IActionResult> GetCurrentWeather(double lat, double lon)
     {
-        var weather = await _weatherService.GetCurrentWeatherAsync(lat, lon);
-        Console.WriteLine(JsonSerializer.Serialize(weather));
-        return Ok(weather);
+        try
+        {
+            var weather = await _weatherService.GetCurrentWeatherAsync(lat, lon);
+            return Ok(weather);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
     }
     
     [HttpGet("currentByCity")]
@@ -34,7 +41,7 @@ public class WeatherController : ControllerBase
             {
                 return NotFound(new { error = "No places found" });
             }
-            
+
             var firstLocation = locationData.First();
             var weather = await _weatherService.GetCurrentWeatherAsync(firstLocation.lat, firstLocation.lon);
             return Ok(weather);
@@ -44,8 +51,7 @@ public class WeatherController : ControllerBase
             return BadRequest(new { error = ex.Message });
         }
     }
-
-    // Endpoint to get place suggestions
+    
     [HttpGet("places")]
     public async Task<IActionResult> GetPlaceSuggestions(string query)
     {
@@ -57,54 +63,44 @@ public class WeatherController : ControllerBase
                 return NotFound(new { error = "No places found" });
             }
 
-            var suggestions = locationData.Select(location => new
-            {
-                name = location.name,
-                lat = location.lat,
-                lon = location.lon,
-                country = location.country,
-                state = location.state
-            }).ToList();
+            // Group by name, country, and state to remove duplicates, but retain the latitude and longitude of the first occurrence
+            var distinctSuggestions = locationData
+                .GroupBy(location => new { location.name, location.country, location.state })
+                .Select(g => g.First())
+                .Select(location => new
+                {
+                    location.name,
+                    location.lat,
+                    location.lon,
+                    location.country,
+                    location.state
+                })
+                .ToList();
 
-            return Ok(suggestions);
+            return Ok(distinctSuggestions);
         }
         catch (Exception ex)
         {
             return BadRequest(new { error = ex.Message });
         }
     }
-    //Air Pollution
+    
     [HttpGet("currentAirPollution")]
     public async Task<IActionResult> GetCurrentAirPollution(double lat, double lon)
     {
         var airPollution = await _weatherService.GetCurrentAirPollutionAsync(lat, lon);
-        Console.WriteLine(JsonSerializer.Serialize(airPollution));
         return Ok(airPollution);
     }
-    
-
-    // [HttpGet("prediction")]
-    // public async Task<IActionResult> WeatherForNextDays(double lat, double lon)
-    // {
-    //     var weather = await _weatherService.GetWeatherForNextDaysAsync(lat, lon);
-    //     Console.WriteLine(JsonSerializer.Serialize(weather));
-    //     return Ok(weather);
-    // }
     
     [HttpGet("prediction")]
     public async Task<IActionResult> WeatherForNextDays(double lat, double lon)
     {
-        // Get hourly weather for today and highest temperature for the next 5 days
         var (hourlyWeatherToday, dailyHighestTemp) = await _weatherService.GetWeatherForCurrentAndNextDaysAsync(lat, lon);
-
-        // Create a response object to encapsulate the data
         var result = new
         {
             HourlyWeatherToday = hourlyWeatherToday,
             DailyHighestTemp = dailyHighestTemp
         };
-
-        // Return the response as JSON
         return Ok(result);
     }
 }

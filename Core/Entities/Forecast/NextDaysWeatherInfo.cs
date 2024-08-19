@@ -1,6 +1,7 @@
 ﻿using System.Text.Json.Serialization;
+using Core.Entities.CurrentWeather;
 
-namespace Core.Entities;
+namespace Core.Entities.Forecast;
 
 public class NextDaysWeatherInfo
 {

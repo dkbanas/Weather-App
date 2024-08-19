@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Core.Entities;
+namespace Core.Entities.CurrentWeather;
 
 public class Sys
 {

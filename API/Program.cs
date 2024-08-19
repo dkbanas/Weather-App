@@ -1,3 +1,4 @@
+using Core.Interfaces;
 using Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,8 +16,8 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers();
 
 // Register WeatherService
-builder.Services.AddHttpClient<WeatherService>();
-builder.Services.AddScoped<WeatherService>(); 
+builder.Services.AddHttpClient<IWeatherService, WeatherService>();
+builder.Services.AddScoped<IWeatherService,WeatherService>(); 
 
 //Swagger
 builder.Services.AddEndpointsApiExplorer();

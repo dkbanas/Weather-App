@@ -9,6 +9,7 @@ import {
 } from "../../partials/current-weather-details-card/current-weather-details-card.component";
 import {FiveDaysForecastComponent} from "../../partials/five-days-forecast/five-days-forecast.component";
 import {HourlyWeatherCardComponent} from "../../partials/hourly-weather-card/hourly-weather-card.component";
+import {NgbCarousel, NgbCarouselConfig} from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
   selector: 'app-home-page',
@@ -20,7 +21,8 @@ import {HourlyWeatherCardComponent} from "../../partials/hourly-weather-card/hou
     CurrentWeatherDetailsCardComponent,
     FiveDaysForecastComponent,
     HourlyWeatherCardComponent,
-    NgIf
+    NgIf,
+    NgbCarousel
   ],
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.scss'
@@ -30,7 +32,9 @@ export class HomePageComponent {
   airPollution: ICurrentAirPollution | null = null;
   hourlyWeatherToday: any[] = [];
   dailyHighestTemp: any[] = [];
-  constructor(private weatherService: WeatherService) {}
+
+  constructor(private weatherService: WeatherService,) {
+  }
 
   ngOnInit() {
     this.weatherService.weather$.subscribe(weather => {
