@@ -1,6 +1,5 @@
 bin
 obj
-appsettings.Development.json
 appsettings.json
 # IDEs and editors
 .idea/*
