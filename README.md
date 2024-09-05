@@ -24,6 +24,10 @@ MyWeather is a web application designed to offer comprehensive weather informati
 - Weather Data: OpenWeather API (Free Plan)
 - Styling: Bootstrap 5 for modern and responsive design
 
+## 🖼️ Screenshots
+![image alt](https://github.com/dkbanas/Weather-App/blob/e1d4c42477873fde6c154df12bc69086cb563705/Screenshots/WeatherFirstRun.png)
+![image alt](https://github.com/dkbanas/Weather-App/blob/e1d4c42477873fde6c154df12bc69086cb563705/Screenshots/Weather.png)
+
 ## 🛠️ How to run
 - 1.Clone repository
 - 2.Open appsettings.Development.json file inside API folder and fill your "ApiKey"
